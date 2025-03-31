@@ -97,9 +97,7 @@ On the device running thin-edge.io, you can renew the certificate using the foll
 1. Renew the self-signed certificate
 
     ```sh
-    tedge cert renew --self-signed
-    tedge http post /c8y/service/devicecert/certificates/upload --file "$(tedge config get device.cert_path)"
-    tedge reconnect c8y
+    tedge cert renew --self-signed || tedge cert renew
     ```
 
 1. Upload the certificate using the microservice in this repository
