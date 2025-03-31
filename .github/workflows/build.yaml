@@ -18,9 +18,9 @@ jobs:
           go-version: "1.23"
       - uses: taiki-e/install-action@just
       - name: Install GoReleaser
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         with:
-          version: '~> v1'
+          version: '~> v2'
           install-only: true
       - run: just build
       - uses: actions/upload-artifact@v4
