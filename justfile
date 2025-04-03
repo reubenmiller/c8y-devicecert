@@ -1,5 +1,9 @@
 set dotenv-load
 
+# Install cross-platform tools
+build-setup:
+    docker run --privileged --rm tonistiigi/binfmt --install all
+
 # init dotenv file
 init-dotenv:
     echo "C8Y_HOST=$C8Y_HOST" > .env
@@ -15,7 +19,7 @@ start:
     go run ./cmd/main/main.go
 
 # Build microservice
-build:
+build: build-setup
     goreleaser release --snapshot --clean
     ./build/microservice.sh pack --name devicecert --manifest cumulocity.devicecert.json --dockerfile Dockerfile
 
