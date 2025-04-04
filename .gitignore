@@ -5,3 +5,6 @@ app.log
 dist/
 *.zip
 .DS_Store
+*.deb
+*.rpm
+*.apk

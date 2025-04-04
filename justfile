@@ -29,5 +29,5 @@ deploy:
 
 # Build client packages (to be deployed to the devices)
 build-clients:
-    cd clients/c8y-devicecert-renewer && nfpm package -p deb -t ../../dist/
-    cd clients/c8y-devicecert-renewer && nfpm package -p rpm -t ../../dist/
+    cd clients/c8y-devicecert-renewer && nfpm package -p deb -t ../../
+    cd clients/c8y-devicecert-renewer && nfpm package -p rpm -t ../../
