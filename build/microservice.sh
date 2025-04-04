@@ -142,7 +142,7 @@ readInput () {
 }
 
 setDefaults () {
-	ZIP_NAME="${IMAGE_NAME}-${SEMVER}.zip"
+	ZIP_NAME="${IMAGE_NAME}_${SEMVER}.zip"
 	if [ "x$APPLICATION_NAME" == "x" ]
 	then 
 		APPLICATION_NAME=$IMAGE_NAME
