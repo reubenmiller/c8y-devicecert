@@ -3,6 +3,8 @@
 Cumulocity microservice to support customers who are using thin-edge.io with self signed certificates, but can't
 use the new upcoming Cumulocity Certificate Authority feature.
 
+![architecture](./docs/architecture.drawio.png)
+
 The microservice provides one endpoint which allows for already registered devices to upload a new self-signed certificate
 using a JWT obtained from the previous certificate.
 
