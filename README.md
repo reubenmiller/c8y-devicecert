@@ -77,13 +77,13 @@ just deploy
 1. Download the microservices from the releases pages
 
     ```sh
-    wget https://github.com/reubenmiller/c8y-devicecert/releases/download/0.0.1/devicecert.zip
+    wget https://github.com/reubenmiller/c8y-devicecert/releases/download/0.0.9/devicecert_0.0.9.zip
     ```
 
 1. Install the microservice
 
     ```sh
-    c8y microservices create --file ./devicecert.zip
+    c8y microservices create --file ./devicecert_0.0.9.zip
     ```
 
 1. Add the following user roles to be able to request new tokens
