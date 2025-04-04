@@ -11,6 +11,7 @@ APPLICATION_NAME=
 APPLICATION_ID=
 MANIFEST_FILE="cumulocity.json"
 DOCKER_FILE="Dockerfile"
+SEMVER="${SEMVER:-0.0.0-snapshot}"
 
 PACK=1
 DEPLOY=1
@@ -141,11 +142,11 @@ readInput () {
 }
 
 setDefaults () {
-	ZIP_NAME="$IMAGE_NAME.zip"
+	ZIP_NAME="${IMAGE_NAME}-${SEMVER}.zip"
 	if [ "x$APPLICATION_NAME" == "x" ]
 	then 
 		APPLICATION_NAME=$IMAGE_NAME
-	fi	
+	fi
 }
 
 printHelp () {
@@ -222,7 +223,8 @@ exportImage () {
 zipFile () {
 	echo "[INFO] Zip file $ZIP_NAME"
 	echo "[INFO] Working dir [$( pwd )]"
-	cp "$MANIFEST_FILE" "cumulocity.json"
+	# Copy the base manifest and inject the version into it
+	jq '. | .version = "'"$SEMVER"'"' "$MANIFEST_FILE" > "cumulocity.json"
 	zip $ZIP_NAME "cumulocity.json" "image.tar"
 	rm -f "cumulocity.json"
 

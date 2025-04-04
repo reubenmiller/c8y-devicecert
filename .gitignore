@@ -8,3 +8,4 @@ dist/
 *.deb
 *.rpm
 *.apk
+devicecert/
