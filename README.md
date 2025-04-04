@@ -92,22 +92,34 @@ just deploy
     c8y userroles addRoleToGroup --group devices --role ROLE_SELF_SIGNED_CERT_CREATE
     ```
 
-On the device running thin-edge.io, you can renew the certificate using the following steps:
+### Device client
 
-1. Renew the self-signed certificate
+A client package is available which will install systemd timer and service which will automatically renew the certificate if required (determined by the minimum validity duration). This service does not require any user interaction to renew the certificate via custom Cumulocity **devicecert** microservice.
 
-    ```sh
-    tedge cert renew --self-signed || tedge cert renew
-    ```
+The client package can be installed either by Cumulocity, or manually installing the package on the device and can be downloaded from the [Releases Page](https://github.com/reubenmiller/c8y-devicecert/releases).
 
-1. Upload the certificate using the microservice in this repository
+Below shows some examples of installing it manually on the device via the command line:
 
-    ```sh
-    tedge http post /c8y/service/devicecert/certificates/upload --file "$(tedge config get device.cert_path)"
-    ```
+**Debian / Ubuntu**
 
-1. Reconnect to Cumulocity
+```sh
+sudo apt-get install c8y-devicecert-renewer_*_all.deb
 
-    ```sh
-    tedge reconnect c8y
-    ```
+# Example
+sudo apt-get install c8y-devicecert-renewer_0.0.8_all.deb
+```
+
+**RPM-based Operating Systems**
+
+```sh
+dnf install c8y-devicecert-renewer-0.0.8-1.noarch.rpm
+```
+
+#### Manually renewing the certificate
+
+It is strongly recommended that you let the automatic certificate renewal service managed the renew of the certificate. However in the event
+that you wish to manually trigger the renew, then you can run the following command on the device:
+
+```sh
+sudo systemctl start c8y-devicecert-renewer.service
+```
