@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=https://nfpm.goreleaser.com/static/schema.json
+---
+name: "c8y-devicecert-renewer"
+description: |
+  Cumulocity self-signed certificate renewer service
+arch: all
+platform: "linux"
+version: "${GIT_SEMVER}"
+release: "${RELEASE}"
+section: misc
+priority: "optional"
+maintainer: "thin-edge.io team <info@thin-edge.io>"
+vendor: "thin-edge.io"
+homepage: "https://thin-edge.io"
+license: "Apache-2.0"
+
+apk:
+  # Use noarch instead of "all"
+  arch: noarch
+
+depends:
+  - tedge
+
+contents:
+  - src: ./c8y-devicecert-renewer.sh
+    dst: /usr/bin/c8y-devicecert-renewer.sh
+    file_info:
+      mode: 0755
+
+  - src: ./services/systemd/c8y-devicecert-renewer.target
+    dst: /lib/systemd/system/c8y-devicecert-renewer.target
+    file_info:
+      mode: 0644
+    packager: deb
+  - src: ./services/systemd/c8y-devicecert-renewer.target
+    dst: /lib/systemd/system/c8y-devicecert-renewer.target
+    file_info:
+      mode: 0644
+    packager: rpm
+
+  - src: ./services/systemd/c8y-devicecert-renewer.service
+    dst: /lib/systemd/system/c8y-devicecert-renewer.service
+    file_info:
+      mode: 0644
+    packager: deb
+  - src: ./services/systemd/c8y-devicecert-renewer.service
+    dst: /lib/systemd/system/c8y-devicecert-renewer.service
+    file_info:
+      mode: 0644
+    packager: rpm
+
+  - src: ./services/systemd/c8y-devicecert-renewer.timer
+    dst: /lib/systemd/system/c8y-devicecert-renewer.timer
+    file_info:
+      mode: 0644
+    packager: deb
+  - src: ./services/systemd/c8y-devicecert-renewer.timer
+    dst: /lib/systemd/system/c8y-devicecert-renewer.timer
+    file_info:
+      mode: 0644
+    packager: rpm
+
+scripts:
+  postinstall: ./packaging/postinst

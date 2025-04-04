@@ -22,11 +22,28 @@ jobs:
         with:
           version: '~> v2'
           install-only: true
+      - name: Install nfpm
+        run: |
+          set -x
+          BIN_OS=$(uname -s)
+          BIN_ARCH=$(uname -m | sed 's/aarch64/arm64/g' | sed 's/amd64/x86_64/g')
+          PATTERN="nfpm_*_${BIN_OS}_${BIN_ARCH}.tar.gz"
+          mkdir -p "$HOME/.local/bin"
+          gh release download --pattern "$PATTERN" -R goreleaser/nfpm --output - | tar xvzf - -C "$HOME/.local/bin" nfpm
+          chmod a+x "$HOME/.local/bin/nfpm"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        env:
+          GH_TOKEN: ${{ github.token }}
+  
       - run: just build
+      - run: just build-clients
       - uses: actions/upload-artifact@v4
         with:
           name: artifacts
-          path: "*.zip"
+          path: |
+            *.zip
+            *.deb
+            *.rpm
 
   release:
     runs-on: ubuntu-latest
@@ -55,3 +72,5 @@ jobs:
           draft: true
           files: |
             dist/*.zip
+            dist/*.deb
+            dist/*.rpm

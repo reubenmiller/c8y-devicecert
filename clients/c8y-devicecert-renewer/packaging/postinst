@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+if command -V systemctl >/dev/null >&2; then
+    systemctl daemon-reload >/dev/null 2>&1 ||:
+    systemctl enable c8y-devicecert-renewer.timer ||:
+    systemctl start c8y-devicecert-renewer.timer ||:
+fi

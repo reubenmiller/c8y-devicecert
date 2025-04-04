@@ -26,3 +26,8 @@ build: build-setup
 # Deploy microservice
 deploy:
     c8y microservices create --file ./devicecert.zip
+
+# Build client packages (to be deployed to the devices)
+build-client:
+    cd clients/c8y-devicecert-renewer && nfpm package -p deb -t ../../dist/
+    cd clients/c8y-devicecert-renewer && nfpm package -p rpm -t ../../dist/
