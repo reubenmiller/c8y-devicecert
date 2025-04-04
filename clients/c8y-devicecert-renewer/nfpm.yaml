@@ -5,7 +5,7 @@ description: |
   Cumulocity self-signed certificate renewer service
 arch: all
 platform: "linux"
-version: "${GIT_SEMVER}"
+version: "${SEMVER}"
 release: "${RELEASE}"
 section: misc
 priority: "optional"
