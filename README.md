@@ -12,7 +12,7 @@ using a JWT obtained from the previous certificate.
 * Device user must match the Common Name of the certificate being added
 * The previous certificate is not removed (this may change in the future)
 
-The project uses the unofficial [github.com/reubenmiller/go-c8y](github.com/reubenmiller/go-c8y) Cumulocity client modules.
+The project uses [github.com/reubenmiller/go-c8y](github.com/reubenmiller/go-c8y) which is a golang sdk for Cumulocity.
 
 # Getting Started
 
