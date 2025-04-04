@@ -50,6 +50,13 @@ CERT_PATH=$(tedge config get "${CLOUD}.device.cert_path")
 BACKUP_CERTIFICATE="${CERT_PATH}.bak"
 RENEW_TYPE=${RENEW_TYPE:-c8y-self-signed}
 
+# Only used for tedge < 1.5.0 where openssl is used to check if the cert is about to expire
+# Newer tedge versions have a customizable tedge.toml value to control this instead
+OPENSSL_MIN_CERT_VALIDITY_DURATION_SEC="${OPENSSL_MIN_CERT_VALIDITY_DURATION_SEC:-}"
+if [ -z "$OPENSSL_MIN_CERT_VALIDITY_DURATION_SEC" ]; then
+    OPENSSL_MIN_CERT_VALIDITY_DURATION_SEC=$((90 * 86400))
+fi
+
 #
 # Helpers
 #
@@ -95,8 +102,8 @@ needs_renewal() {
             exit 1
         fi
 
-        OPENSSL_MIN_CERT_VALIDITY_DURATION_SEC=$((365 * 86400))
         if ! openssl x509 -checkend "$OPENSSL_MIN_CERT_VALIDITY_DURATION_SEC" -noout -in "$CERT_PATH"; then
+            echo "Certificate will expire soon (within ${OPENSSL_MIN_CERT_VALIDITY_DURATION_SEC}s)" >&2
             # certificate will expire
             exit 0
         else
