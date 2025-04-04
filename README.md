@@ -53,11 +53,16 @@ The project uses the unofficial [github.com/reubenmiller/go-c8y](github.com/reub
 
 * Install `jq`. Used to extract the microservice version from the cumulocity.json
 * Install `zip`. Used by microservice script to create a zip file which can be uploaded to Cumulocity
+* Install `docker`. Used by microservice script to create a zip file which can be uploaded to Cumulocity
 
 Build the Cumulocity microservice zip file by executing
 
 ```sh
+# Build (assuming you have a clean repo)
 just build
+
+# Or Build a snapshot (with uncommitted changes in the repo)
+just build-snapshot
 ```
 
 You can then deploy the microservice using:
