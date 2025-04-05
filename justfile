@@ -23,6 +23,11 @@ build *ARGS="": build-setup
     goreleaser build --auto-snapshot --clean {{ARGS}}
     just pack
 
+# Build local microservice instance
+build-local *ARGS="": build-setup
+    goreleaser build --snapshot --clean {{ARGS}}
+    just pack
+
 # Package the Cumulocity Microservice as a zip file
 pack:
     ./build/microservice.sh pack --name devicecert --manifest cumulocity.devicecert.json --dockerfile Dockerfile
