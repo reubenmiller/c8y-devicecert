@@ -122,7 +122,7 @@ func RegisterDevice(c echo.Context) error {
 	var cert *c8y.Certificate
 	var certResp *c8y.Response
 
-	for attempts < retries {
+	for attempts <= retries {
 		enabled := true
 		cert, certResp, err = cc.Microservice.Client.DeviceCertificate.Create(
 			cc.Microservice.WithServiceUser(auth.Tenant),
@@ -166,7 +166,7 @@ func RegisterDevice(c echo.Context) error {
 	}
 
 	if err != nil {
-		return c.JSON(http.StatusConflict, map[string]any{
+		return c.JSON(http.StatusUnprocessableEntity, map[string]any{
 			"error":  "Failed to upload trusted certificate",
 			"reason": err.Error(),
 		})
