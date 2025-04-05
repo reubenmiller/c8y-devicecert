@@ -19,8 +19,8 @@ start:
     go run ./cmd/main/main.go
 
 # Build microservice
-build: build-setup
-    goreleaser build --auto-snapshot --clean
+build *ARGS="": build-setup
+    goreleaser build --auto-snapshot --clean {{ARGS}}
     just pack
 
 # Package the Cumulocity Microservice as a zip file
