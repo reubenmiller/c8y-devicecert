@@ -134,7 +134,7 @@ renew_self_signed() {
     if tedge http --help >/dev/null 2>&1; then
         tedge http post "$MICROSERVICE_URL" --file "$(tedge config get "${CLOUD}.device.cert_path")"
     else
-        curl -f -XPOST "http://$(tedge config get c8y.proxy.client.host):$(tedge config get c8y.proxy.client.port)$MICROSERVICE_URL" -d@"$(tedge config get "${CLOUD}.device.cert_path")"
+        curl -f -XPOST "http://$(tedge config get c8y.proxy.client.host):$(tedge config get c8y.proxy.client.port)$MICROSERVICE_URL" --data-binary @"$(tedge config get "${CLOUD}.device.cert_path")"
     fi 
 }
 
