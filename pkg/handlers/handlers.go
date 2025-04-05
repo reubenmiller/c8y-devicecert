@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -114,41 +115,61 @@ func RegisterDevice(c echo.Context) error {
 
 	slog.Info("Uploading device certificate.", "userID", auth.UserID, "tenant", auth.Tenant, "externalID", externalID, "deviceUser", auth.UserID)
 
-	// Add trusted certificate
-	enabled := true
-	cert, certResp, err := cc.Microservice.Client.DeviceCertificate.Create(
-		cc.Microservice.WithServiceUser(auth.Tenant),
-		auth.Tenant,
-		&c8y.Certificate{
-			Name:                    externalID,
-			AutoRegistrationEnabled: &enabled,
-			Status:                  c8y.CertificateStatusEnabled,
-			CertInPemFormat:         certBuf.String(),
-		},
-	)
+	// Add trusted certificate with selective retries, due to current limitation
+	// of the sdk which does not subscribe to service user changes
+	attempts := 0
+	retries := 1
+	var cert *c8y.Certificate
+	var certResp *c8y.Response
+
+	for attempts < retries {
+		enabled := true
+		cert, certResp, err = cc.Microservice.Client.DeviceCertificate.Create(
+			cc.Microservice.WithServiceUser(auth.Tenant),
+			auth.Tenant,
+			&c8y.Certificate{
+				Name:                    externalID,
+				AutoRegistrationEnabled: &enabled,
+				Status:                  c8y.CertificateStatusEnabled,
+				CertInPemFormat:         certBuf.String(),
+			},
+		)
+
+		if err != nil {
+			if certResp != nil && certResp.StatusCode() == http.StatusUnauthorized {
+				// Transient error
+				// Indication that the server user list is out of date and needs to be updated, so
+				// update it, then try the request again
+				slog.Info("Invalid service user detected, refreshing service users. The next request for the same tenant should then work")
+				if err := cc.Microservice.Client.Microservice.SetServiceUsers(); err != nil {
+					slog.Error("Could not update microservice service user list.", "err", err)
+				}
+				err = fmt.Errorf("microservice error. Invalid service user credentials detected for tenant. %s", auth.Tenant)
+			} else if certResp != nil && certResp.StatusCode() == http.StatusConflict {
+				// Don't retry this error
+				slog.Info("Trusted certificate has already been uploaded.", "tenant", auth.Tenant, "externalID", externalID, "deviceUser", auth.UserID)
+				return c.JSON(http.StatusConflict, map[string]any{
+					"error":  "Certificate has already been uploaded",
+					"reason": err.Error(),
+				})
+			} else {
+				// Retry unknown transient errors
+				slog.Error("Failed to upload trusted certificate", "reason", err)
+				err = fmt.Errorf("certificate upload error. %w", err)
+			}
+		}
+
+		if retries == 0 {
+			break
+		}
+		attempts += 1
+	}
 
 	if err != nil {
-		if certResp != nil && certResp.StatusCode() == http.StatusConflict {
-			slog.Info("Trusted certificate has already been uploaded.", "tenant", auth.Tenant, "externalID", externalID, "deviceUser", auth.UserID)
-			return c.JSON(http.StatusConflict, map[string]any{
-				"error":  "Certificate has already been uploaded",
-				"reason": err.Error(),
-			})
-		} else if certResp != nil && certResp.StatusCode() == http.StatusUnauthorized {
-			// TODO: It would be better if the microservice would subscribe to tenant changes, and just update the list now
-			// but until then just update the cache so the next request will work
-			slog.Info("Invalid service user detected, refreshing service users. The next request for the same tenant should then work")
-			if err := cc.Microservice.Client.Microservice.SetServiceUsers(); err != nil {
-				slog.Error("Could not update microservice service user list.", "err", err)
-			}
-			return c.JSON(http.StatusInternalServerError, map[string]any{
-				"error":  "microservice credential update in progress",
-				"reason": "The microservice is currently updating its internal credentials, please try again",
-			})
-		} else {
-			slog.Error("Failed to upload trusted certificate", "reason", err)
-			return err
-		}
+		return c.JSON(http.StatusConflict, map[string]any{
+			"error":  "Failed to upload trusted certificate",
+			"reason": err.Error(),
+		})
 	}
 
 	// TODO: Remove previous certificate, or should this be done periodically, or
