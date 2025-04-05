@@ -3,7 +3,7 @@ module github.com/reubenmiller/c8y-devicecert
 require (
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/prometheus/client_golang v1.21.1
-	github.com/reubenmiller/go-c8y v0.27.5
+	github.com/reubenmiller/go-c8y v0.27.6
 	go.uber.org/zap v1.27.0
 )
 

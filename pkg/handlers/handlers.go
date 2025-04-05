@@ -112,6 +112,8 @@ func RegisterDevice(c echo.Context) error {
 		})
 	}
 
+	slog.Info("Uploading device certificate.", "userID", auth.UserID, "tenant", auth.Tenant, "externalID", externalID, "deviceUser", auth.UserID)
+
 	// Add trusted certificate
 	enabled := true
 	cert, certResp, err := cc.Microservice.Client.DeviceCertificate.Create(
@@ -127,10 +129,21 @@ func RegisterDevice(c echo.Context) error {
 
 	if err != nil {
 		if certResp != nil && certResp.StatusCode() == http.StatusConflict {
-			slog.Info("Trusted certificate has already been uploaded")
+			slog.Info("Trusted certificate has already been uploaded.", "tenant", auth.Tenant, "externalID", externalID, "deviceUser", auth.UserID)
 			return c.JSON(http.StatusConflict, map[string]any{
 				"error":  "Certificate has already been uploaded",
 				"reason": err.Error(),
+			})
+		} else if certResp != nil && certResp.StatusCode() == http.StatusUnauthorized {
+			// TODO: It would be better if the microservice would subscribe to tenant changes, and just update the list now
+			// but until then just update the cache so the next request will work
+			slog.Info("Invalid service user detected, refreshing service users. The next request for the same tenant should then work")
+			if err := cc.Microservice.Client.Microservice.SetServiceUsers(); err != nil {
+				slog.Error("Could not update microservice service user list.", "err", err)
+			}
+			return c.JSON(http.StatusInternalServerError, map[string]any{
+				"error":  "microservice credential update in progress",
+				"reason": "The microservice is currently updating its internal credentials, please try again",
 			})
 		} else {
 			slog.Error("Failed to upload trusted certificate", "reason", err)
