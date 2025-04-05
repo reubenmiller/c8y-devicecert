@@ -20,12 +20,12 @@ start:
 
 # Build microservice
 build *ARGS="": build-setup
-    goreleaser build --snapshot --clean {{ARGS}}
+    goreleaser build --auto-snapshot --clean {{ARGS}}
     just pack
 
 # Package the Cumulocity Microservice as a zip file
 pack:
-    env SEMVER=$(jq -r .version dist/metadata.json) ./build/microservice.sh pack --name devicecert --manifest cumulocity.devicecert.json --dockerfile Dockerfile
+    ./build/microservice.sh pack --name devicecert --manifest cumulocity.devicecert.json --dockerfile Dockerfile
 
 # Deploy microservice
 deploy:

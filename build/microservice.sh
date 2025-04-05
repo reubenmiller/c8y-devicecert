@@ -11,12 +11,20 @@ APPLICATION_NAME=
 APPLICATION_ID=
 MANIFEST_FILE="cumulocity.json"
 DOCKER_FILE="Dockerfile"
-SEMVER="${SEMVER:-0.0.0-snapshot}"
+SEMVER="${SEMVER:-}"
 
 PACK=1
 DEPLOY=1
 SUBSCRIBE=1
 HELP=1
+
+if [ -z "$SEMVER" ]; then
+	if [ -f dist/metadata.json ]; then
+		SEMVER=$(jq -r .version dist/metadata.json)
+	else
+		SEMVER="0.0.0-snapshot"
+	fi
+fi
 
 
 execute () {
