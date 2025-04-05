@@ -60,11 +60,7 @@ The project uses [github.com/reubenmiller/go-c8y](github.com/reubenmiller/go-c8y
 Build the Cumulocity microservice zip file by executing
 
 ```sh
-# Build (assuming you have a clean repo)
 just build
-
-# Or Build a snapshot (with uncommitted changes in the repo)
-just build-snapshot
 ```
 
 You can then deploy the microservice using:

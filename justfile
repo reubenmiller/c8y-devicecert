@@ -20,12 +20,7 @@ start:
 
 # Build microservice
 build: build-setup
-    goreleaser release --clean
-    just pack
-
-# Build snapshot of microservice
-build-snapshot: build-setup
-    goreleaser release --snapshot --clean
+    goreleaser build --auto-snapshot --clean
     just pack
 
 # Package the Cumulocity Microservice as a zip file
