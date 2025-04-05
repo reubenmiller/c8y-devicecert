@@ -34,7 +34,7 @@ pack:
 
 # Deploy microservice
 deploy:
-    c8y microservices create --file "./devicecert_$(jq -r .version dist/metadata.json).zip"
+    c8y microservices create --file "./devicecert_$(jq -r .version dist/metadata.json).zip" --name devicecert
 
 # Build client packages (to be deployed to the devices)
 build-clients:
