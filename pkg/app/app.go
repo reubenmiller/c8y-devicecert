@@ -2,12 +2,16 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"time"
 
+	"github.com/hashicorp/go-retryablehttp"
 	"github.com/labstack/echo/v4"
 	"github.com/reubenmiller/c8y-devicecert/internal/model"
 	"github.com/reubenmiller/c8y-devicecert/pkg/c8yauth"
@@ -34,7 +38,10 @@ func NewApp() *App {
 	app := &App{}
 	log.Printf("Application information: Version %s, branch %s, commit %s, buildTime %s", Version, Branch, Commit, BuildTime)
 
-	opts := microservice.Options{}
+	customHTTPClient := retryablehttp.NewClient()
+	opts := microservice.Options{
+		HTTPClient: customHTTPClient.StandardClient(),
+	}
 	opts.AgentInformation = microservice.AgentInformation{
 		SerialNumber: Commit,
 		Revision:     Version,
@@ -42,6 +49,46 @@ func NewApp() *App {
 	}
 
 	c8ymicroservice := microservice.NewDefaultMicroservice(opts)
+
+	customHTTPClient.RetryMax = 2
+	customHTTPClient.PrepareRetry = func(req *http.Request) error {
+		// Update latest service user credentials
+		if username, _, ok := req.BasicAuth(); ok {
+			if tenant, username, found := strings.Cut(username, "/"); found {
+				for _, serviceUser := range c8ymicroservice.Client.ServiceUsers {
+					if serviceUser.Tenant == tenant && serviceUser.Username == username {
+						slog.Info("Updating service user credentials for request.", "tenant", tenant, "userID", username)
+						req.SetBasicAuth(tenant+"/"+username, serviceUser.Password)
+						return nil
+					}
+				}
+			}
+		}
+		return nil
+	}
+
+	customHTTPClient.CheckRetry = func(ctx context.Context, resp *http.Response, err error) (bool, error) {
+		if resp.StatusCode == http.StatusTooManyRequests {
+			return true, nil
+		}
+
+		// unauthorized errors can occurs if the service user's credentials are not up to date
+		if resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden {
+			slog.Info("Service user credentials are invalid, refreshing them.", "statusCode", resp.StatusCode)
+			if serviceUsersErr := c8ymicroservice.Client.Microservice.SetServiceUsers(); serviceUsersErr != nil {
+				slog.Error("Could not update service users list.", "err", serviceUsersErr)
+			} else {
+				slog.Info("Updated service users list")
+			}
+			return true, nil
+		}
+
+		if resp.StatusCode == 0 || (resp.StatusCode >= 500 && resp.StatusCode != http.StatusNotImplemented) {
+			return true, fmt.Errorf("unexpected HTTP status %s", resp.Status)
+		}
+
+		return false, nil
+	}
 
 	// Set app defaults before registering the microservice
 	c8ymicroservice.Config.SetDefault("server.port", "80")

@@ -1,9 +1,10 @@
 module github.com/reubenmiller/c8y-devicecert
 
 require (
+	github.com/hashicorp/go-retryablehttp v0.7.7
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/prometheus/client_golang v1.21.1
-	github.com/reubenmiller/go-c8y v0.27.6
+	github.com/reubenmiller/go-c8y v0.27.7
 	go.uber.org/zap v1.27.0
 )
 
@@ -16,6 +17,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
