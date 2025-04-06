@@ -4,7 +4,7 @@ require (
 	github.com/hashicorp/go-retryablehttp v0.7.7
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/prometheus/client_golang v1.21.1
-	github.com/reubenmiller/go-c8y v0.27.7
+	github.com/reubenmiller/go-c8y v0.27.8
 	go.uber.org/zap v1.27.0
 )
 

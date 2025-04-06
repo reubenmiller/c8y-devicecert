@@ -76,8 +76,8 @@ github.com/prometheus/common v0.62.0 h1:xasJaQlnWAeyHdUBeGjXmutelfJHWMRr+Fg4QszZ
 github.com/prometheus/common v0.62.0/go.mod h1:vyBcEuLSvWos9B1+CyL7JZ2up+uFzXhkqml0W5zIY1I=
 github.com/prometheus/procfs v0.15.1 h1:YagwOFzUgYfKKHX6Dr+sHT7km/hxC76UB0learggepc=
 github.com/prometheus/procfs v0.15.1/go.mod h1:fB45yRUv8NstnjriLhBQLuOUt+WW4BsoGhij/e3PBqk=
-github.com/reubenmiller/go-c8y v0.27.7 h1:h6Qko7EVxkKrTvWrtW66XMxs/rAyV4W5WBzNeo6/PK4=
-github.com/reubenmiller/go-c8y v0.27.7/go.mod h1:wnd2RcePmAg7qTsHrdgmvbCINWS8a7j/dOBJWbLf2XM=
+github.com/reubenmiller/go-c8y v0.27.8 h1:BAThqJj97mE4+q4NfncY9NiyNiqVsnJyDO27f76HVk0=
+github.com/reubenmiller/go-c8y v0.27.8/go.mod h1:wnd2RcePmAg7qTsHrdgmvbCINWS8a7j/dOBJWbLf2XM=
 github.com/rivo/uniseg v0.1.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rogpeppe/go-internal v1.10.0 h1:TMyTOH3F/DB16zRVcYyreMH6GnZZrwQVAoYjRBZyWFQ=
 github.com/rogpeppe/go-internal v1.10.0/go.mod h1:UQnix2H7Ngw/k4C5ijL5+65zddjncjaFoBhdsK/akog=
