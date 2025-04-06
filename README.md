@@ -31,12 +31,6 @@ The project uses [github.com/reubenmiller/go-c8y](github.com/reubenmiller/go-c8y
     just register
     ```
 
-1. Add the new user role to the device user group
-
-    ```sh
-    c8y userroles addRoleToGroup --group devices --role ROLE_SELF_SIGNED_CERT_CREATE
-    ```
-
 1. Start the application
 
     ```sh
@@ -87,12 +81,6 @@ just deploy
 
     ```sh
     c8y microservices create --file ./devicecert_0.0.16.zip
-    ```
-
-1. Add the following user roles to be able to request new tokens
-
-    ```sh
-    c8y userroles addRoleToGroup --group devices --role ROLE_SELF_SIGNED_CERT_CREATE
     ```
 
 ### Device client
