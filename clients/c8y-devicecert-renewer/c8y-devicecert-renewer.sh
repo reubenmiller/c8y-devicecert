@@ -50,6 +50,11 @@ CERT_PATH=$(tedge config get "${CLOUD}.device.cert_path")
 BACKUP_CERTIFICATE="${CERT_PATH}.bak"
 RENEW_TYPE=${RENEW_TYPE:-c8y-self-signed}
 
+# MQTT topics
+TOPIC_ROOT=$(tedge config get mqtt.topic_root)
+TOPIC_ID=$(tedge config get mqtt.device_topic_id)
+DEVICE_TOPIC="${TOPIC_ROOT}/${TOPIC_ID}/a/certificate"
+
 # Only used for tedge < 1.5.0 where openssl is used to check if the cert is about to expire
 # Newer tedge versions have a customizable tedge.toml value to control this instead
 OPENSSL_MIN_CERT_VALIDITY_DURATION_SEC="${OPENSSL_MIN_CERT_VALIDITY_DURATION_SEC:-}"
@@ -72,7 +77,7 @@ verify_certificate_or_rollback() {
     echo "------ BEGIN Failed Certificate ------" >&2 ||:
     head -n 100 "$CERT_PATH" >&2 ||:
     echo "------ END Failed Certificate ------" >&2 ||:
-    mv "$BACKUP_CERTIFICATE" "$CERT_PATH"
+    restore_backup
     tedge reconnect "$CLOUD" || echo "WARNING: Failed to reconnect after restoring previous certificate. Maybe it is just an transient error" >&2
 }
 
@@ -116,6 +121,23 @@ needs_renewal() {
     fi
 }
 
+create_alarm() {
+    # Create an alarm 
+    BODY=$(
+        cat <<EOT
+{
+  "text": "Self-signed certificate renewal failed",
+  "severity": "major"
+} 
+EOT
+)
+    tedge mqtt pub -r "$DEVICE_TOPIC" "$BODY"
+}
+
+clear_alarm() {
+    tedge mqtt pub -r "$DEVICE_TOPIC" ""
+}
+
 renew_self_signed() {
     #
     # Renew using a Cumulocity trusted-certificate proxy microservice
@@ -154,6 +176,12 @@ renew_cert() {
     esac
 }
 
+restore_backup() {
+    chmod 644 "$CERT_PATH"
+    mv "$BACKUP_CERTIFICATE" "$CERT_PATH"
+    chmod 444 "$CERT_PATH"
+}
+
 renew() {
     # If a backup file already exists, than the script may of been interrupted, so check if the
     # current connection is ok or not, and revert to the backup if necessary
@@ -173,6 +201,8 @@ renew() {
 
     if ! renew_cert; then
         echo "Certificate renewal failed. Cleaning up backup" >&2
+        create_alarm || echo "Failed to create alarm" >&2
+
         # Check if the existing certificate has been overwritten by
         # the renew command, if so, then the backup should be restored
         if is_backup_same; then
@@ -180,7 +210,7 @@ renew() {
             rm -f "$BACKUP_CERTIFICATE"
         else
             echo "Certificate has been changed by the renewal process even though it was not successful, so restoring the backup" >&2
-            mv "$BACKUP_CERTIFICATE" "$CERT_PATH" 
+            restore_backup
         fi
 
         echo "Failed to renew certificate" >&2
@@ -188,6 +218,7 @@ renew() {
     fi
 
     verify_certificate_or_rollback
+    clear_alarm || echo "Failed to clear alarm" >&2
 }
 
 #
