@@ -74,13 +74,13 @@ just deploy
 1. Download the microservices from the releases pages
 
     ```sh
-    wget https://github.com/reubenmiller/c8y-devicecert/releases/download/0.0.17/devicecert_0.0.17.zip
+    wget https://github.com/reubenmiller/c8y-devicecert/releases/download/0.0.18/devicecert_0.0.18.zip
     ```
 
 1. Install the microservice
 
     ```sh
-    c8y microservices create --file ./devicecert_0.0.17.zip
+    c8y microservices create --file ./devicecert_0.0.18.zip
     ```
 
 ### Device client
@@ -97,13 +97,13 @@ Below shows some examples of installing it manually on the device via the comman
 sudo apt-get install c8y-devicecert-renewer_*_all.deb
 
 # Example
-sudo apt-get install c8y-devicecert-renewer_0.0.17_all.deb
+sudo apt-get install c8y-devicecert-renewer_0.0.18_all.deb
 ```
 
 **RPM-based Operating Systems**
 
 ```sh
-dnf install c8y-devicecert-renewer-0.0.17-1.noarch.rpm
+dnf install c8y-devicecert-renewer-0.0.18-1.noarch.rpm
 ```
 
 #### Manually renewing the certificate
