@@ -23,9 +23,7 @@
       "ROLE_EVENT_ADMIN",
       "ROLE_TENANT_ADMIN"
     ],
-    "roles": [
-      "ROLE_SELF_SIGNED_CERT_CREATE"
-    ],
+    "roles": [],
     "resources": {
       "cpu": "0.5",
       "memory": "256Mi"

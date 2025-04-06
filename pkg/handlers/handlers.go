@@ -17,7 +17,7 @@ import (
 
 // RegisterHandlers registers the http handlers to the given echo server
 func RegisterCertificateHandlers(e *echo.Echo) {
-	e.Add("POST", "/certificates/upload", RegisterDevice, c8yauth.Authorization(c8yauth.RoleSelfSignedCertCreate))
+	e.Add("POST", "/certificates/upload", RegisterDevice, c8yauth.Authorization(c8yauth.RoleDevice))
 }
 
 func ExternalIdExists(m *microservice.Microservice, tenant string, externalID string) bool {

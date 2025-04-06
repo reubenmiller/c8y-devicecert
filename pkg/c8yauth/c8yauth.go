@@ -26,7 +26,7 @@ func (e *ErrInvalidAuthType) Error() string {
 type Role string
 
 const (
-	RoleSelfSignedCertCreate Role = "ROLE_SELF_SIGNED_CERT_CREATE"
+	RoleDevice Role = "ROLE_DEVICE"
 )
 
 func SkipCheck(c echo.Context) bool {
