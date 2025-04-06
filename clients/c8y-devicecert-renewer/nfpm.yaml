@@ -62,3 +62,4 @@ contents:
 
 scripts:
   postinstall: ./packaging/postinst
+  postremove: ./packaging/postrm

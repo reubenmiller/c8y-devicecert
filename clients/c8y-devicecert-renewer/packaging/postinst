@@ -1,8 +1,46 @@
 #!/bin/sh
 set -e
 
-if command -V systemctl >/dev/null >&2; then
-    systemctl daemon-reload >/dev/null 2>&1 ||:
-    systemctl enable c8y-devicecert-renewer.timer ||:
-    systemctl start c8y-devicecert-renewer.timer ||:
+cleanInstall() {
+    printf "Post Install of an clean install\n"
+    # Step 3 (clean install), enable the service in the proper way for this platform
+    
+    if command -V systemctl >/dev/null >&2; then
+        printf "Reload the service unit from disk\n"
+        systemctl daemon-reload ||:
+        printf "Unmask the service\n"
+        systemctl unmask c8y-devicecert-renewer.timer ||:
+        printf "Set the preset flag for the service unit\n"
+        systemctl preset c8y-devicecert-renewer.timer ||:
+        printf "Set the enabled flag for the service unit\n"
+        systemctl enable c8y-devicecert-renewer.timer ||:
+        systemctl restart c8y-devicecert-renewer.timer ||:
+    fi
+}
+
+upgrade() {
+    echo "Upgrading"
+}
+
+# Step 2, check if this is a clean install or an upgrade
+action="$1"
+if  [ "$1" = "configure" ] && [ -z "$2" ]; then
+  # Alpine linux does not pass args, and deb passes $1=configure
+  action="install"
+elif [ "$1" = "configure" ] && [ -n "$2" ]; then
+    # deb passes $1=configure $2=<current version>
+    action="upgrade"
 fi
+
+case "$action" in
+  "1" | "install")
+    cleanInstall
+    ;;
+  "2" | "upgrade")
+    upgrade
+    ;;
+  *)
+    # $1 == version being installed
+    cleanInstall
+    ;;
+esac
