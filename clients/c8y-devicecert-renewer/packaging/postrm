@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+
+remove() {
+    if command -V systemctl >/dev/null >&2; then
+        systemctl daemon-reload >/dev/null 2>&1 ||:
+        systemctl disable c8y-devicecert-renewer.timer ||:
+        systemctl stop c8y-devicecert-renewer.timer ||:
+    fi
+}
+
+echo "$@"
+
+action="$1"
+
+case "$action" in
+  "0" | "remove")
+    remove
+    ;;
+  "1" | "upgrade")
+    ;;
+  "purge")
+    ;;
+  *)
+    # Alpine linux
+    remove
+    ;;
+esac
