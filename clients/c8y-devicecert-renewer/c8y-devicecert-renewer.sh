@@ -156,7 +156,25 @@ renew_self_signed() {
     if tedge http --help >/dev/null 2>&1; then
         tedge http post "$MICROSERVICE_URL" --file "$(tedge config get "${CLOUD}.device.cert_path")"
     else
-        curl -f -XPOST "http://$(tedge config get c8y.proxy.client.host):$(tedge config get c8y.proxy.client.port)$MICROSERVICE_URL" --data-binary @"$(tedge config get "${CLOUD}.device.cert_path")"
+        # Check if certs are being used
+        CLIENT_KEY=$(tedge config get http.client.auth.key_file ||:)
+        CLIENT_CERT=$(tedge config get http.client.auth.cert_file ||:)
+
+        if [ -n "$CLIENT_KEY" ] && [ -n "$CLIENT_CERT" ]; then
+            # HTTPS
+            curl -f \
+                -XPOST \
+                "https://$(tedge config get c8y.proxy.client.host):$(tedge config get c8y.proxy.client.port)$MICROSERVICE_URL" \
+                --data-binary @"$(tedge config get "${CLOUD}.device.cert_path")" \
+                --key "$CLIENT_KEY" \
+                --cert "$CLIENT_CERT"
+        else
+            # HTTP
+            curl -f \
+                -XPOST \
+                "http://$(tedge config get c8y.proxy.client.host):$(tedge config get c8y.proxy.client.port)$MICROSERVICE_URL" \
+                --data-binary @"$(tedge config get "${CLOUD}.device.cert_path")"
+        fi
     fi 
 }
 
