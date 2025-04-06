@@ -157,6 +157,8 @@ func RegisterDevice(c echo.Context) error {
 				slog.Error("Failed to upload trusted certificate", "reason", err)
 				err = fmt.Errorf("certificate upload error. %w", err)
 			}
+		} else {
+			break
 		}
 
 		if retries == 0 {
