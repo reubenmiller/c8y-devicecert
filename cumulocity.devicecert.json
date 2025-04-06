@@ -8,8 +8,8 @@
       "support": "support@thin-edge.io"
     },
     "isolation": "MULTI_TENANT",
-    "scale": "NONE",
-    "replicas": 1,
+    "scale": "AUTO",
+    "replicas": 2,
     "requiredRoles": [
       "ROLE_INVENTORY_READ",
       "ROLE_INVENTORY_CREATE",
