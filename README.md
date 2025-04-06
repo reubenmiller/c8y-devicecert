@@ -114,3 +114,14 @@ that you wish to manually trigger the renew, then you can run the following comm
 ```sh
 sudo systemctl start c8y-devicecert-renewer.service
 ```
+
+### Transitioning to the Cumulocity certificate-authority
+
+If you've enabled the new Cumulocity certificate-authority feature in your tenant, then thin-edge.io will automatically support the renewal of the certificate using the tenant's certificate authority. The service will automatically renew the device's certificate once the certificate's validity drops below the configured threshold, however to ensure a clean transition to the new certificate-authority service, then you should use the following steps:
+
+1. Talk to Cumulocity support to activate the Cumulocity certificate-authority feature
+1. Update thin-edge.io to the latest version (this will include a new service to handled automatic certificate renewals)
+1. Uninstall/remove the `c8y-devicecert-renewer` package on the device
+1. Unsubscribe to the `devicecert` microservice in your Cumulocity tenant
+
+**Note:** Once a certificate is issued by the Cumulocity tenant's certificate-authority, the **c8y-devicecert-renewer** service will fail, as the `tedge cert renew --self-signed` command will fail if the existing certificate is not a self-signed certificate. This will prevent accidentally switching back from a CA signed certificate to a self-signed certificate. However it is still advisable to remove the **c8y-devicecert-renewer** package.
