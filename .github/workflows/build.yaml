@@ -36,7 +36,12 @@ jobs:
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
         env:
           GH_TOKEN: ${{ github.token }}
-  
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        with:
+          # Used fixed docker version 24 due to compatibility problem with older versions
+          version: "24"
       - name: Set version
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - run: just build
