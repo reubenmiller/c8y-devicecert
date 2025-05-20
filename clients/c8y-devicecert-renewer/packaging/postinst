@@ -9,12 +9,12 @@ cleanInstall() {
         printf "Reload the service unit from disk\n"
         systemctl daemon-reload ||:
         printf "Unmask the service\n"
-        systemctl unmask c8y-devicecert-renewer.timer ||:
+        systemctl unmask c8y-devicecert-renewer@c8y.timer ||:
         printf "Set the preset flag for the service unit\n"
-        systemctl preset c8y-devicecert-renewer.timer ||:
+        systemctl preset c8y-devicecert-renewer@c8y.timer ||:
         printf "Set the enabled flag for the service unit\n"
-        systemctl enable c8y-devicecert-renewer.timer ||:
-        systemctl restart c8y-devicecert-renewer.timer ||:
+        systemctl enable c8y-devicecert-renewer@c8y.timer ||:
+        systemctl restart c8y-devicecert-renewer@c8y.timer ||:
     fi
 }
 

@@ -1,5 +1,5 @@
 [Unit]
-Description=Timer for the renewal of the Cumulocity self-signed certificate
+Description=Timer for the renewal of the Cumulocity (%I) self-signed certificate
 Documentation=https://thin-edge.io
 PartOf=c8y-devicecert-renewer.target
 

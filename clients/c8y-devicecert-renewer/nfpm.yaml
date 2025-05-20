@@ -18,8 +18,19 @@ apk:
   # Use noarch instead of "all"
   arch: noarch
 
-depends:
-  - tedge
+overrides:
+  # The depends override can for example be used to provide version
+  # constraints for dependencies where different package formats use different
+  # versions or for dependencies that are named differently.
+  deb:
+    depends:
+      - tedge (>= 1.5.0)
+  rpm:
+    depends:
+      - tedge >= 1.5.0-1
+  apk:
+    depends:
+      - tedge
 
 contents:
   - src: ./c8y-devicecert-renewer.sh
@@ -38,24 +49,24 @@ contents:
       mode: 0644
     packager: rpm
 
-  - src: ./services/systemd/c8y-devicecert-renewer.service
-    dst: /lib/systemd/system/c8y-devicecert-renewer.service
+  - src: ./services/systemd/c8y-devicecert-renewer@.service
+    dst: /lib/systemd/system/c8y-devicecert-renewer@.service
     file_info:
       mode: 0644
     packager: deb
-  - src: ./services/systemd/c8y-devicecert-renewer.service
-    dst: /lib/systemd/system/c8y-devicecert-renewer.service
+  - src: ./services/systemd/c8y-devicecert-renewer@.service
+    dst: /lib/systemd/system/c8y-devicecert-renewer@.service
     file_info:
       mode: 0644
     packager: rpm
 
-  - src: ./services/systemd/c8y-devicecert-renewer.timer
-    dst: /lib/systemd/system/c8y-devicecert-renewer.timer
+  - src: ./services/systemd/c8y-devicecert-renewer@.timer
+    dst: /lib/systemd/system/c8y-devicecert-renewer@.timer
     file_info:
       mode: 0644
     packager: deb
-  - src: ./services/systemd/c8y-devicecert-renewer.timer
-    dst: /lib/systemd/system/c8y-devicecert-renewer.timer
+  - src: ./services/systemd/c8y-devicecert-renewer@.timer
+    dst: /lib/systemd/system/c8y-devicecert-renewer@.timer
     file_info:
       mode: 0644
     packager: rpm

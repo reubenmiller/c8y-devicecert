@@ -1,0 +1,27 @@
+### 
+[Unit]
+Description=Cumulocity (%I) self-signed certificate renewer service
+After=network-online.target
+StartLimitIntervalSec=0
+PartOf=c8y-devicecert-renewer.target
+
+[Service]
+Type=oneshot
+User=root
+
+Environment=RENEW_WITH_CA=self-signed
+
+; Only run service is if the certificate needs renewal
+ExecCondition=/usr/bin/tedge cert needs-renewal %i
+
+; Run renewal
+ExecStartPre=/usr/bin/c8y-devicecert-renewer.sh renew %i
+
+; Reconnect
+ExecStart=/usr/bin/tedge reconnect %i
+
+; Cleanup
+ExecStopPost=sh -c 'rm -f "$(tedge config get %i.device.cert_path).new"'
+
+[Install]
+WantedBy=multi-user.target
