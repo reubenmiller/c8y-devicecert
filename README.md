@@ -1,7 +1,7 @@
 # Introduction
 
 Cumulocity microservice to support customers who are using thin-edge.io with self signed certificates, but can't
-use the new upcoming Cumulocity Certificate Authority feature.
+use the new Cumulocity Certificate Authority feature which is in the Public Preview phase.
 
 ![architecture](./docs/architecture.drawio.png)
 
@@ -74,13 +74,13 @@ just deploy
 1. Download the microservices from the releases pages
 
     ```sh
-    wget https://github.com/reubenmiller/c8y-devicecert/releases/download/0.0.18/devicecert_0.0.18.zip
+    wget https://github.com/reubenmiller/c8y-devicecert/releases/download/0.1.0/devicecert_0.1.0.zip
     ```
 
 1. Install the microservice
 
     ```sh
-    c8y microservices create --file ./devicecert_0.0.18.zip
+    c8y microservices create --file ./devicecert_0.1.0.zip
     ```
 
 ### Device client
@@ -97,13 +97,13 @@ Below shows some examples of installing it manually on the device via the comman
 sudo apt-get install c8y-devicecert-renewer_*_all.deb
 
 # Example
-sudo apt-get install c8y-devicecert-renewer_0.0.18_all.deb
+sudo apt-get install c8y-devicecert-renewer_0.1.0_all.deb
 ```
 
 **RPM-based Operating Systems**
 
 ```sh
-dnf install c8y-devicecert-renewer-0.0.18-1.noarch.rpm
+dnf install c8y-devicecert-renewer-0.1.0-1.noarch.rpm
 ```
 
 #### Manually renewing the certificate
@@ -112,7 +112,14 @@ It is strongly recommended that you let the automatic certificate renewal servic
 that you wish to manually trigger the renew, then you can run the following command on the device:
 
 ```sh
-sudo systemctl start c8y-devicecert-renewer.service
+sudo systemctl start c8y-devicecert-renewer@c8y.service
+```
+
+Alternatively, you can call the renewal command manually, and then try to reconnect using the new certificate.
+
+```sh
+sudo c8y-devicecert-renewer.sh renew c8y
+sudo tedge reconnect c8y
 ```
 
 ### Transitioning to the Cumulocity certificate-authority
@@ -124,4 +131,4 @@ If you've enabled the new Cumulocity certificate-authority feature in your tenan
 1. Uninstall/remove the `c8y-devicecert-renewer` package on the device
 1. Unsubscribe to the `devicecert` microservice in your Cumulocity tenant
 
-**Note:** Once a certificate is issued by the Cumulocity tenant's certificate-authority, the **c8y-devicecert-renewer** service will fail, as the `tedge cert renew --self-signed` command will fail if the existing certificate is not a self-signed certificate. This will prevent accidentally switching back from a CA signed certificate to a self-signed certificate. However it is still advisable to remove the **c8y-devicecert-renewer** package.
+**Note:** Once a certificate is issued by the Cumulocity tenant's certificate-authority, the **c8y-devicecert-renewer@c8y** service will fail, as the `tedge cert renew --ca self-signed` command will fail if the existing certificate is not a self-signed certificate. This will prevent accidentally switching back from a CA signed certificate to a self-signed certificate. However it is still advisable to remove the **c8y-devicecert-renewer@c8y** package.
