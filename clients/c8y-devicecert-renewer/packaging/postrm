@@ -4,8 +4,8 @@ set -e
 remove() {
     if command -V systemctl >/dev/null >&2; then
         systemctl daemon-reload >/dev/null 2>&1 ||:
-        systemctl disable c8y-devicecert-renewer.timer ||:
-        systemctl stop c8y-devicecert-renewer.timer ||:
+        systemctl disable c8y-devicecert-renewer@c8y.timer ||:
+        systemctl stop c8y-devicecert-renewer@c8y.timer ||:
     fi
 }
 

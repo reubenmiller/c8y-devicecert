@@ -38,24 +38,24 @@ contents:
       mode: 0644
     packager: rpm
 
-  - src: ./services/systemd/c8y-devicecert-renewer.service
-    dst: /lib/systemd/system/c8y-devicecert-renewer.service
+  - src: ./services/systemd/c8y-devicecert-renewer@.service
+    dst: /lib/systemd/system/c8y-devicecert-renewer@.service
     file_info:
       mode: 0644
     packager: deb
-  - src: ./services/systemd/c8y-devicecert-renewer.service
-    dst: /lib/systemd/system/c8y-devicecert-renewer.service
+  - src: ./services/systemd/c8y-devicecert-renewer@.service
+    dst: /lib/systemd/system/c8y-devicecert-renewer@.service
     file_info:
       mode: 0644
     packager: rpm
 
-  - src: ./services/systemd/c8y-devicecert-renewer.timer
-    dst: /lib/systemd/system/c8y-devicecert-renewer.timer
+  - src: ./services/systemd/c8y-devicecert-renewer@.timer
+    dst: /lib/systemd/system/c8y-devicecert-renewer@.timer
     file_info:
       mode: 0644
     packager: deb
-  - src: ./services/systemd/c8y-devicecert-renewer.timer
-    dst: /lib/systemd/system/c8y-devicecert-renewer.timer
+  - src: ./services/systemd/c8y-devicecert-renewer@.timer
+    dst: /lib/systemd/system/c8y-devicecert-renewer@.timer
     file_info:
       mode: 0644
     packager: rpm
